@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PROJECT='lunch-and-dinner'
-ROOT=/home/newsapps/sites/$PROJECT
+ROOT=/home/ubuntu/$PROJECT
 VIRTUAL_ENV=/home/ubuntu/.virtualenvs/$PROJECT
 SECRETS=/home/ubuntu/secrets.sh
 
