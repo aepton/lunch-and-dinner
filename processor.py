@@ -103,11 +103,11 @@ def generate_email(data):
 
 
 def send_email(email_body, to_addresses=['abraham.epton@gmail.com', 'lizz.giordano@gmail.com']):
-    print 
     client = boto3.client(
         'ses',
         aws_access_key_id=os.getenv('ABE_AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.getenv('ABE_AWS_SECRET_ACCESS_KEY'))
+        aws_secret_access_key=os.getenv('ABE_AWS_SECRET_ACCESS_KEY'),
+        region_name='us-east-1')
     response = client.send_email(
         Source='abraham.epton@gmail.com',
         Destination={
