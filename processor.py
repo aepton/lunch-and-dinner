@@ -135,8 +135,7 @@ def send_email(email_body, to_addresses=['abraham.epton@gmail.com', 'lizz.giorda
             'abraham.epton@gmail.com',
         ]
     )
-    print response
 
 
 if __name__ == '__main__':
-    send_email(generate_email(order_responses(get_data_from_spreadsheet())), ['abraham.epton@gmail.com'])
+    send_email(generate_email(order_responses(get_data_from_spreadsheet())))
