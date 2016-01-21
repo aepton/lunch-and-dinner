@@ -7,8 +7,10 @@ from csv import DictReader
 from datetime import datetime, timedelta
 
 QUESTION_DATE = 'What date is this for?'
-QUESTION_DINNER = "Where'd we eat dinner?"
-QUESTION_LUNCH = 'How about lunch?'
+QUESTION_DINNER_ABE = "Where'd Abe eat dinner?"
+QUESTION_DINNER_LIZZ = "Where'd Lizz eat dinner?"
+QUESTION_LUNCH_ABE = "Where'd Abe get lunch?"
+QUESTION_SEXYTIMES = 'Sexytimes?'
 
 RESPONSE_DINNER_BOUGHT = 'Out'
 RESPONSE_DINNER_FROM_HOME = 'At home'
@@ -45,8 +47,10 @@ def order_responses(data):
     date_format = '%m/%d/%Y'
     for row in data:
         dates[datetime.strptime(row[QUESTION_DATE], date_format)] = {
-            'lunch': row[QUESTION_LUNCH],
-            'dinner': row[QUESTION_DINNER]
+            'lunchAbe': row[QUESTION_LUNCH_ABE],
+            'dinnerAbe': row[QUESTION_DINNER_ABE],
+            'dinnerLizz': row[QUESTION_DINNER_LIZZ],
+            'sexytimes': row[QUESTION_SEXYTIMES]
         }
     return dates
 
@@ -59,7 +63,7 @@ def generate_email(data):
     one_month = timedelta(days=30)
     counter = {'missing': 0}
 
-    for key in ['lunch', 'dinner']:
+    for key in ['lunchAbe', 'dinnerAbe', 'dinnerLizz', 'sexytimes']:
         counter[key] = {'all time': 0, 'this week': 0, 'this month': 0}
 
     current_date = begin_date
@@ -68,41 +72,67 @@ def generate_email(data):
         if current_date not in data:
             counter['missing'] += 1
         else:
-            if data[current_date]['lunch'] == RESPONSE_LUNCH_BOUGHT:
-                counter['lunch']['all time'] += 1
+            if data[current_date]['lunchAbe'] == RESPONSE_LUNCH_BOUGHT:
+                counter['lunchAbe']['all time'] += 1
                 if current_date >= datetime.today() - one_week:
-                    counter['lunch']['this week'] += 1
+                    counter['lunchAbe']['this week'] += 1
                 if current_date >= datetime.today() - one_month:
-                    counter['lunch']['this month'] += 1
-            if data[current_date]['dinner'] == RESPONSE_DINNER_BOUGHT:
-                counter['dinner']['all time'] += 1
+                    counter['lunchAbe']['this month'] += 1
+            if data[current_date]['dinnerAbe'] == RESPONSE_DINNER_BOUGHT:
+                counter['dinnerAbe']['all time'] += 1
                 if current_date >= datetime.today() - one_week:
-                    counter['dinner']['this week'] += 1
+                    counter['dinnerAbe']['this week'] += 1
                 if current_date >= datetime.today() - one_month:
-                    counter['dinner']['this month'] += 1
+                    counter['dinnerAbe']['this month'] += 1
+            if data[current_date]['dinnerLizz'] == RESPONSE_DINNER_BOUGHT:
+                counter['dinnerLizz']['all time'] += 1
+                if current_date >= datetime.today() - one_week:
+                    counter['dinnerLizz']['this week'] += 1
+                if current_date >= datetime.today() - one_month:
+                    counter['dinnerLizz']['this month'] += 1
+            if data[current_date]['sexytimes']:
+                counter['sexytimes']['all time'] += int(data[current_date]['sexytimes'])
+                if current_date >= datetime.today() - one_week:
+                    counter['dinnerLizz']['this week'] += int(data[current_date]['sexytimes'])
+                if current_date >= datetime.today() - one_month:
+                    counter['dinnerLizz']['this month'] += int(data[current_date]['sexytimes'])
         current_date += one_day
 
     template = """
-<p>We've eaten dinner out <strong>%s time%s</strong> in the last week. This month, we've eaten out %s time%s, and we've done so %s time%s all year.</p>
+<p>Abe has eaten dinner out <strong>%s time%s</strong> in the last week. This month, he's eaten out %s time%s, and has done so %s time%s all year.</p>
+<p>Lizz has eaten dinner out <strong>%s time%s</strong> in the last week. This month, she's eaten out %s time%s, and has done so %s time%s all year.</p>
 <p>Abe has bought a lunch <strong>%s time%s</strong> in the last week, %s time%s in the last month and %s time%s all year.</p>
+<p>Sexytimes have been had <strong>%s time%s</strong> in the last week, %s time%s in the last month and %s time%s this year.</p>
     """ % (
-        counter['dinner']['this week'],
-        's' if counter['dinner']['this week'] >= 2 else '',
-        counter['dinner']['this month'],
-        's' if counter['dinner']['this month'] >= 2 else '',
-        counter['dinner']['all time'],
-        's' if counter['dinner']['all time'] >= 2 else '',
-        counter['lunch']['this week'],
-        's' if counter['lunch']['this week'] > 2 else '',
-        counter['lunch']['this month'],
-        's' if counter['lunch']['this month'] > 2 else '',
-        counter['lunch']['all time'],
-        's' if counter['lunch']['all time'] > 2 else '',
+        counter['dinnerAbe']['this week'],
+        's' if counter['dinnerAbe']['this week'] >= 2 else '',
+        counter['dinnerAbe']['this month'],
+        's' if counter['dinnerAbe']['this month'] >= 2 else '',
+        counter['dinnerAbe']['all time'],
+        's' if counter['dinnerAbe']['all time'] >= 2 else '',
+        counter['dinnerLizz']['this week'],
+        's' if counter['dinnerLizz']['this week'] >= 2 else '',
+        counter['dinnerLizz']['this month'],
+        's' if counter['dinnerLizz']['this month'] >= 2 else '',
+        counter['dinnerLizz']['all time'],
+        's' if counter['dinnerLizz']['all time'] >= 2 else '',
+        counter['lunchAbe']['this week'],
+        's' if counter['lunchAbe']['this week'] > 2 else '',
+        counter['lunchAbe']['this month'],
+        's' if counter['lunchAbe']['this month'] > 2 else '',
+        counter['lunchAbe']['all time'],
+        's' if counter['lunchAbe']['all time'] > 2 else '',
+        counter['sexytimes']['this week'],
+        's' if counter['sexytimes']['this week'] > 2 else '',
+        counter['sexytimes']['this month'],
+        's' if counter['sexytimes']['this month'] > 2 else '',
+        counter['sexytimes']['all time'],
+        's' if counter['sexytimes']['all time'] > 2 else ''
     )
     return template
 
 
-def send_email(email_body, to_addresses=['abraham.epton@gmail.com', 'lizz.giordano@gmail.com']):
+def send_email(email_body, to_addresses=['abraham.epton@gmail.com']):
     client = boto3.client(
         'ses',
         aws_access_key_id=os.getenv('ABE_AWS_ACCESS_KEY_ID'),
