@@ -101,7 +101,7 @@ def generate_email(data):
     template = """
 <p>Abe has eaten dinner out <strong>%s time%s</strong> in the last week. This month, he's eaten out %s time%s, and has done so %s time%s all year.</p>
 <p>Lizz has eaten dinner out <strong>%s time%s</strong> in the last week. This month, she's eaten out %s time%s, and has done so %s time%s all year.</p>
-<p>Abe has bought a lunch <strong>%s time%s</strong> in the last week, %s time%s in the last month and %s time%s all year.</p>
+<p>Abe has purchased a lunch <strong>%s time%s</strong> in the last week, %s time%s in the last month and %s time%s all year.</p>
 <p>Sexytimes have been had <strong>%s time%s</strong> in the last week, %s time%s in the last month and %s time%s this year.</p>
     """ % (
         counter['dinnerAbe']['this week'],
