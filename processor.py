@@ -93,9 +93,9 @@ def generate_email(data):
             if data[current_date]['sexytimes']:
                 counter['sexytimes']['all time'] += int(data[current_date]['sexytimes'])
                 if current_date >= datetime.today() - one_week:
-                    counter['dinnerLizz']['this week'] += int(data[current_date]['sexytimes'])
+                    counter['sexytimes']['this week'] += int(data[current_date]['sexytimes'])
                 if current_date >= datetime.today() - one_month:
-                    counter['dinnerLizz']['this month'] += int(data[current_date]['sexytimes'])
+                    counter['sexytimes']['this month'] += int(data[current_date]['sexytimes'])
         current_date += one_day
 
     template = """
@@ -105,31 +105,39 @@ def generate_email(data):
 <p>Sexytimes have been had <strong>%s time%s</strong> in the last week, %s time%s in the last month and %s time%s this year.</p>
     """ % (
         counter['dinnerAbe']['this week'],
-        's' if counter['dinnerAbe']['this week'] >= 2 else '',
+        getSuffix(counter['dinnerAbe']['this week']),
         counter['dinnerAbe']['this month'],
-        's' if counter['dinnerAbe']['this month'] >= 2 else '',
+        getSuffix(counter['dinnerAbe']['this month']),
         counter['dinnerAbe']['all time'],
-        's' if counter['dinnerAbe']['all time'] >= 2 else '',
+        getSuffix(counter['dinnerAbe']['all time']),
         counter['dinnerLizz']['this week'],
-        's' if counter['dinnerLizz']['this week'] >= 2 else '',
+        getSuffix(counter['dinnerLizz']['this week']),
         counter['dinnerLizz']['this month'],
-        's' if counter['dinnerLizz']['this month'] >= 2 else '',
+        getSuffix(counter['dinnerLizz']['this month']),
         counter['dinnerLizz']['all time'],
-        's' if counter['dinnerLizz']['all time'] >= 2 else '',
+        getSuffix(counter['dinnerLizz']['all time']),
         counter['lunchAbe']['this week'],
-        's' if counter['lunchAbe']['this week'] > 2 else '',
+        getSuffix(counter['lunchAbe']['this week']),
         counter['lunchAbe']['this month'],
-        's' if counter['lunchAbe']['this month'] > 2 else '',
+        getSuffix(counter['lunchAbe']['this month']),
         counter['lunchAbe']['all time'],
-        's' if counter['lunchAbe']['all time'] > 2 else '',
+        getSuffix(counter['lunchAbe']['all time']),
         counter['sexytimes']['this week'],
-        's' if counter['sexytimes']['this week'] > 2 else '',
+        getSuffix(counter['sexytimes']['this week']),
         counter['sexytimes']['this month'],
-        's' if counter['sexytimes']['this month'] > 2 else '',
+        getSuffix(counter['sexytimes']['this month']),
         counter['sexytimes']['all time'],
-        's' if counter['sexytimes']['all time'] > 2 else ''
+        getSuffix(counter['sexytimes']['all time'])
     )
     return template
+
+
+def getSuffix(num):
+    if num == 0:
+        return 's'
+    elif num >= 2:
+        return 's'
+    return ''
 
 
 def send_email(email_body, to_addresses=['abraham.epton@gmail.com']):
